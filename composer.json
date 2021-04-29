@@ -1,0 +1,53 @@
+{
+    "name": "victorlopezalonso/laravel-utils",
+    "description": "This is a collection of Laravel utils to get your project ready with supercharged classes, traits and Laravel specific classes",
+    "keywords": [
+        "victorlopezalonso",
+        "laravel-utils"
+    ],
+    "homepage": "https://github.com/victorlopezalonso/laravel-utils",
+    "license": "MIT",
+    "type": "library",
+    "authors": [
+        {
+            "name": "Víctor López Alonso",
+            "email": "victorlopezalonso@gmail.com",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": ">=7.2",
+        "illuminate/support": "^6|^7|^8|^9"
+    }, "require-dev": {
+        "orchestra/testbench-dusk": "^4|^5|^6",
+        "phpunit/phpunit": "^6|^7|^8"
+    },
+    "autoload": {
+        "psr-4": {
+            "Victorlopezalonso\\LaravelUtils\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Victorlopezalonso\\LaravelUtils\\Tests\\": "tests"
+        }
+    },
+    "scripts": {
+        "test": "vendor/bin/phpunit",
+        "test-coverage": "vendor/bin/phpunit --coverage-html coverage"
+
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Victorlopezalonso\\LaravelUtils\\LaravelUtilsServiceProvider"
+            ],
+            "aliases": {
+                "LaravelUtils": "Victorlopezalonso\\LaravelUtils\\LaravelUtilsFacade"
+            }
+        }
+    }
+}
