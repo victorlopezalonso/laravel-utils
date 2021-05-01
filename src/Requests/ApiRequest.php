@@ -1,8 +1,7 @@
 <?php
 
-namespace App\Http\Requests;
+namespace Victorlopezalonso\LaravelUtils\Requests;
 
-use App\Models\Copy;
 use Illuminate\Foundation\Http\FormRequest;
 
 /**

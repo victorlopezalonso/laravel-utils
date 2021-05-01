@@ -25,7 +25,7 @@ class Headers
     {
         $name = self::getKeyName($key);
 
-        return request()->header($keys[$name] ?? null);
+        return request()->header($name ?? null);
     }
 
     /**
@@ -89,7 +89,7 @@ class Headers
      */
     public static function getOs()
     {
-        return self::header('os')
+        return self::header('os');
     }
 
     /**

@@ -1,12 +1,13 @@
 <?php
 
-namespace Victorlopezalonso\LaravelUtils\Models;
+namespace Victorlopezalonso\LaravelUtils\Traits;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
 use Victorlopezalonso\LaravelUtils\Classes\Headers;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Victorlopezalonso\LaravelUtils\Helpers\StorageHelper;
 
 class ApiModel extends Model
 {

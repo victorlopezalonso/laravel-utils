@@ -3,8 +3,10 @@
 namespace Victorlopezalonso\LaravelUtils;
 
 use Illuminate\Routing\Router;
+use Illuminate\Contracts\Http\Kernel;
 use Illuminate\Support\ServiceProvider;
 use Victorlopezalonso\LaravelUtils\Http\Middleware\CheckHeadersMiddleware;
+use Victorlopezalonso\LaravelUtils\Http\Middleware\LocalizationMiddleware;
 
 class LaravelUtilsServiceProvider extends ServiceProvider
 {
@@ -23,6 +25,9 @@ class LaravelUtilsServiceProvider extends ServiceProvider
 
         $router = $this->app->make(Router::class);
         $router->aliasMiddleware('checkHeaders', CheckHeadersMiddleware::class);
+
+        $kernel = $this->app->make(Kernel::class);
+        $kernel->pushMiddleware(LocalizationMiddleware::class);
 
         if ($this->app->runningInConsole()) {
             $this->publishes([
