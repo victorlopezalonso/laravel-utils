@@ -2,11 +2,23 @@
 
 namespace Victorlopezalonso\LaravelUtils\Classes;
 
-use App\Exceptions\ApiVersionOutdatedException;
-use App\Models\Config;
+// use App\Exceptions\ApiVersionOutdatedException;
+// use App\Models\Config;
+
+use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
+
+define('API_KEY', config('laravel-utils.headers.x-api-key'));
+define('LANGUAGE', config('laravel-utils.headers.language'));
+define('OS', config('laravel-utils.headers.os'));
+define('APP_VERSION', config('laravel-utils.headers.app_version'));
+define('LANGUAGES', config('laravel-utils.languages'));
+define('DEFAULT_LANGUAGE', config('laravel-utils.default_language'));
+define('OS_ANDROID', config('laravel-utils.os.android'));
+define('OS_IOS', config('laravel-utils.os.ios'));
+define('OS_WEB', config('laravel-utils.os.web'));
 
 /**
  * Class Headers.
@@ -21,10 +33,10 @@ class Headers
     public static function asArray()
     {
         return [
-            config('headers.api_key')     => self::getApiKey(),
-            config('headers.language')    => self::getLanguage(),
-            config('headers.os')          => self::getOs(),
-            config('headers.app_version') => self::getAppVersion(),
+            API_KEY => self::getApiKey(),
+            LANGUAGE => self::getLanguage(),
+            OS => self::getOs(),
+            APP_VERSION => self::getAppVersion(),
         ];
     }
 
@@ -35,7 +47,7 @@ class Headers
      */
     public static function getApiKey()
     {
-        return request()->header(config('headers.api_key'));
+        return request()->header(API_KEY);
     }
 
     /**
@@ -45,10 +57,10 @@ class Headers
      */
     public static function getLanguage()
     {
-        $language = request()->header(config('headers.language'));
+        $language = request()->header(LANGUAGE);
 
-        if (!$language || !\in_array($language, Config::languages(), true)) {
-            return config('languages.default');
+        if (!$language || !\in_array($language, LANGUAGES, true)) {
+            return DEFAULT_LANGUAGE;
         }
 
         return $language;
@@ -61,7 +73,7 @@ class Headers
      */
     public static function getAppVersion()
     {
-        return request()->header(config('headers.app_version')) ?? '0.0.0';
+        return request()->header(APP_VERSION) ?? '0.0.0';
     }
 
     /**
@@ -71,7 +83,7 @@ class Headers
      */
     public static function getOs()
     {
-        return request()->header(config('headers.os'));
+        return strtolower(request()->header(OS));
     }
 
     /**
@@ -81,7 +93,7 @@ class Headers
      */
     public static function isAndroid()
     {
-        return strtolower(config('os.android.name')) === strtolower(request()->header(config('headers.os')));
+        return strtolower(OS_ANDROID) === self::getOs();
     }
 
     /**
@@ -91,25 +103,17 @@ class Headers
      */
     public static function isIos()
     {
-        return strtolower(config('os.ios.name')) === strtolower(request()->header(config('headers.os')));
+        return strtolower(OS_IOS) === self::getOs();
     }
 
     /**
-     * Return the os param as an integer.
+     * Check if the os is iOS.
      *
-     * @return null|int
+     * @return bool
      */
-    public static function getOsAsInteger()
+    public static function isWeb()
     {
-        if (self::isAndroid()) {
-            return config('os.android.value');
-        }
-
-        if (self::isIos()) {
-            return config('os.ios.vaulue');
-        }
-
-        return config('os.other.value');
+        return strtolower(OS_WEB) === self::getOs();
     }
 
     /**
@@ -119,26 +123,29 @@ class Headers
      */
     public static function checkHeaders()
     {
-        if (!config('flags.check_headers_middlware')) {
-            return;
-        }
+        // TODO transform this function into a middleware
+        // if (!config('laravel-utils.flags.check_headers_middlware')) {
+        //     return;
+        // }
 
         $validator = Validator::make(self::asArray(), [
-            config('headers.api_key')     => ['required', Rule::in([env('APP_KEY')])],
-            config('headers.os')          => ['required', Rule::in([
-                config('os.android.name'),
-                config('os.ios.name'),
-            ])],
-            config('headers.app_version') => 'required',
+            config('laravel-utils.headers.api_key') => [
+                'required',
+                Rule::in([env('APP_KEY')])
+            ],
+            config('laravel-utils.headers.os') => [
+                'required',
+                Rule::in([config('laravel-utils.os.android'),config('laravel-utils.os.ios'),config('laravel-utils.os.web')])],
+            config('laravel-utils.headers.app_version') => 'required',
         ]);
 
         if ($validator->fails()) {
             throw new ValidationException($validator);
         }
 
-        throw_if(
-            Config::first()->appVersionIsOutdated(),
-            new ApiVersionOutdatedException()
-        );
+        // throw_if(
+        //     Config::first()->appVersionIsOutdated(),
+        //     new ApiVersionOutdatedException()
+        // );
     }
 }

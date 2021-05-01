@@ -4,8 +4,11 @@ namespace Victorlopezalonso\LaravelUtils\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+use Victorlopezalonso\LaravelUtils\Classes\Headers;
 
-class Post extends Model
+class ApiModel extends Model
 {
     use HasFactory;
 
@@ -113,7 +116,7 @@ class Post extends Model
      */
     public static function insertMany(array $items, array $replacements = [])
     {
-        $now = Carbon::now()->toDateTimeString();
+        $now = now()->toDateTimeString();
 
         foreach ($items as &$item) {
             if ((new static())->usesTimestamps()) {
@@ -139,6 +142,6 @@ class Post extends Model
     {
         return request('limit') && request('limit') < 100
             ? request('limit')
-            : config('constants.config.API_QUERY_RESULTS_PER_PAGE');
+            : config('api_default_per_page');
     }
 }

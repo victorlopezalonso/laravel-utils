@@ -19,10 +19,18 @@ class LaravelUtilsServiceProvider extends ServiceProvider
         // $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
         // $this->loadRoutesFrom(__DIR__.'/routes.php');
 
+        // if (file_exists($file = app_path('src/helpers.php'))) {
+        //     require $file;
+        // }
+
         if ($this->app->runningInConsole()) {
             $this->publishes([
                 __DIR__.'/../config/config.php' => config_path('laravel-utils.php'),
             ], 'config');
+
+            // $this->publishes([
+            //     __DIR__.'/../helpers' => config_path('laravel-utils.php'),
+            // ], 'helpers');
 
             // Publishing the views.
             /*$this->publishes([
@@ -51,6 +59,7 @@ class LaravelUtilsServiceProvider extends ServiceProvider
     {
         // Automatically apply the package configuration
         $this->mergeConfigFrom(__DIR__.'/../config/config.php', 'laravel-utils');
+
 
         // Register the main class to use with the facade
         $this->app->singleton('laravel-utils', function () {
