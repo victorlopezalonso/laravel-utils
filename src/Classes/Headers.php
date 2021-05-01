@@ -2,29 +2,32 @@
 
 namespace Victorlopezalonso\LaravelUtils\Classes;
 
-// use App\Exceptions\ApiVersionOutdatedException;
-// use App\Models\Config;
-
-use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Validation\ValidationException;
-
-define('API_KEY', config('laravel-utils.headers.x-api-key'));
-define('LANGUAGE', config('laravel-utils.headers.language'));
-define('OS', config('laravel-utils.headers.os'));
-define('APP_VERSION', config('laravel-utils.headers.app_version'));
-define('LANGUAGES', config('laravel-utils.languages'));
-define('DEFAULT_LANGUAGE', config('laravel-utils.default_language'));
-define('OS_ANDROID', config('laravel-utils.os.android'));
-define('OS_IOS', config('laravel-utils.os.ios'));
-define('OS_WEB', config('laravel-utils.os.web'));
-
-/**
- * Class Headers.
- */
 class Headers
 {
+    /**
+     * Return the name for a header key
+     *
+     * @return array
+     */
+    public static function getKeyName($key)
+    {
+        $keys = config('laravel-utils.headers');
+
+        return $keys[$key];
+    }
+
+    /**
+     * Return the header value for a key
+     *
+     * @return array
+     */
+    public static function header($key)
+    {
+        $name = self::getKeyName($key);
+
+        return request()->header($keys[$name] ?? null);
+    }
+
     /**
      * Return the headers sent to the service as an array.
      *
@@ -32,12 +35,14 @@ class Headers
      */
     public static function asArray()
     {
-        return [
-            API_KEY => self::getApiKey(),
-            LANGUAGE => self::getLanguage(),
-            OS => self::getOs(),
-            APP_VERSION => self::getAppVersion(),
-        ];
+        $keys = ['x-api-key', 'language', 'os', 'app-version'];
+        $headers = [];
+
+        foreach ($keys as $key) {
+            $headers[$key] = self::getApiKey($key);
+        }
+
+        return $headers;
     }
 
     /**
@@ -47,7 +52,7 @@ class Headers
      */
     public static function getApiKey()
     {
-        return request()->header(API_KEY);
+        return self::header('x-api-key');
     }
 
     /**
@@ -57,10 +62,11 @@ class Headers
      */
     public static function getLanguage()
     {
-        $language = request()->header(LANGUAGE);
+        $language = self::header('language');
+        $appLanguages = config('laravel-utils.languages');
 
-        if (!$language || !\in_array($language, LANGUAGES, true)) {
-            return DEFAULT_LANGUAGE;
+        if (!$language || !\in_array($language, $appLanguages, true)) {
+            return config('laravel-utils.default_language');
         }
 
         return $language;
@@ -73,7 +79,7 @@ class Headers
      */
     public static function getAppVersion()
     {
-        return request()->header(APP_VERSION) ?? '0.0.0';
+        return self::header('app-version') ?? '0.0.0';
     }
 
     /**
@@ -83,7 +89,7 @@ class Headers
      */
     public static function getOs()
     {
-        return strtolower(request()->header(OS));
+        return self::header('os')
     }
 
     /**
@@ -93,7 +99,7 @@ class Headers
      */
     public static function isAndroid()
     {
-        return strtolower(OS_ANDROID) === self::getOs();
+        return strtolower(config('laravel-utils.os.android')) === self::getOs();
     }
 
     /**
@@ -103,16 +109,16 @@ class Headers
      */
     public static function isIos()
     {
-        return strtolower(OS_IOS) === self::getOs();
+        return strtolower(config('laravel-utils.os.ios')) === self::getOs();
     }
 
     /**
-     * Check if the os is iOS.
+     * Check if the os is Web.
      *
      * @return bool
      */
     public static function isWeb()
     {
-        return strtolower(OS_WEB) === self::getOs();
+        return strtolower(config('laravel-utils.os.web')) === self::getOs();
     }
 }

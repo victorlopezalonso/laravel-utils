@@ -11,7 +11,7 @@ return [
     'headers' => [
         'x-api-key' => 'x-api-key',
         'language' => 'language',
-        'app_version' => 'app-version',
+        'app-version' => 'app-version',
         'os' => 'os',
         'os-version' => 'os-version',
         'brand' => 'brand',
