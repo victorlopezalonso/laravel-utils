@@ -115,37 +115,4 @@ class Headers
     {
         return strtolower(OS_WEB) === self::getOs();
     }
-
-    /**
-     * Check the required headers.
-     *
-     * @throws \Throwable
-     */
-    public static function checkHeaders()
-    {
-        // TODO transform this function into a middleware
-        // if (!config('laravel-utils.flags.check_headers_middlware')) {
-        //     return;
-        // }
-
-        $validator = Validator::make(self::asArray(), [
-            config('laravel-utils.headers.api_key') => [
-                'required',
-                Rule::in([env('APP_KEY')])
-            ],
-            config('laravel-utils.headers.os') => [
-                'required',
-                Rule::in([config('laravel-utils.os.android'),config('laravel-utils.os.ios'),config('laravel-utils.os.web')])],
-            config('laravel-utils.headers.app_version') => 'required',
-        ]);
-
-        if ($validator->fails()) {
-            throw new ValidationException($validator);
-        }
-
-        // throw_if(
-        //     Config::first()->appVersionIsOutdated(),
-        //     new ApiVersionOutdatedException()
-        // );
-    }
 }

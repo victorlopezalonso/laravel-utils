@@ -2,7 +2,9 @@
 
 namespace Victorlopezalonso\LaravelUtils;
 
+use Illuminate\Routing\Router;
 use Illuminate\Support\ServiceProvider;
+use Victorlopezalonso\LaravelUtils\Http\Middleware\CheckHeadersMiddleware;
 
 class LaravelUtilsServiceProvider extends ServiceProvider
 {
@@ -19,9 +21,8 @@ class LaravelUtilsServiceProvider extends ServiceProvider
         // $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
         // $this->loadRoutesFrom(__DIR__.'/routes.php');
 
-        // if (file_exists($file = app_path('src/helpers.php'))) {
-        //     require $file;
-        // }
+        $router = $this->app->make(Router::class);
+        $router->aliasMiddleware('checkHeaders', CheckHeadersMiddleware::class);
 
         if ($this->app->runningInConsole()) {
             $this->publishes([
