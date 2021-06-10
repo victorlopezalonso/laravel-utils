@@ -5,7 +5,7 @@
 [![Quality Score](https://img.shields.io/scrutinizer/g/victorlopezalonso/laravel-utils.svg?style=flat-square)](https://scrutinizer-ci.com/g/victorlopezalonso/laravel-utils)
 [![Total Downloads](https://img.shields.io/packagist/dt/victorlopezalonso/laravel-utils.svg?style=flat-square)](https://packagist.org/packages/victorlopezalonso/laravel-utils)
 
-This is where your description should go. Try and limit it to a paragraph or two, and maybe throw in a mention of what PSRs you support to avoid any confusion with users and contributors.
+This package gives you some helper classes and super charged boiler plate for new Laravel projects. We made this package to aim API Rest services for mobile apps plus a dashboard with standard functionality.
 
 ## Installation
 
@@ -15,10 +15,26 @@ You can install the package via composer:
 composer require victorlopezalonso/laravel-utils
 ```
 
+### **Classes**
+
+### - Copy
+
+
+This class allows you to share translations for your project separated into server, app and dashboard translations. 
+
+Using this class you can serve a list of translations with your app via JSON and use versioning to change the texts that your app is using without the need to reupload the app to the market place.
+
+``` php
+if(!$user) {
+    return Copy.server('USER_NOT_FOUND');
+}
+```
+
+
 ## Usage
 
 ``` php
-// Usage description here
+asdfasdf
 ```
 
 ### Testing

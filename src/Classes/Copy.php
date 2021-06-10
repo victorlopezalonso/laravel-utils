@@ -8,11 +8,13 @@ class Copy
 {
     private static function copies()
     {
-        if (!$json = file_get_contents(resource_path() . '/lang/' . App::getLocale() . '.json')) {
+        $path = resource_path() . '/lang/' . App::getLocale() . '.json';
+
+        if (!file_exists($path)) {
             return [];
         }
 
-        return json_decode($json, JSON_PRETTY_PRINT);
+        return json_decode(file_get_contents($path), JSON_PRETTY_PRINT);
     }
 
     private static function filterBy($needle)
@@ -31,16 +33,32 @@ class Copy
 
     public static function server()
     {
-        return self::get(env('SERVER_COPY_KEY') ?? 'SERVER');
+        return self::get(env('SERVER_COPY_KEY') ?? 'server.');
     }
 
     public static function client()
     {
-        return self::get(env('CLIENT_COPY_KEY') ?? 'CLIENT');
+        return self::get(env('CLIENT_COPY_KEY') ?? 'client.');
     }
 
     public static function admin()
     {
-        return self::get(env('ADMIN_COPY_KEY') ?? 'ADMIN');
+        return self::get(env('ADMIN_COPY_KEY') ?? 'admin.');
+    }
+
+    public static function add($language, $newCopies)
+    {
+        $path = resource_path() . '/lang/' . $language . '.json';
+        $copies = [];
+
+        if (file_exists($path)) {
+            $copies = json_decode(file_get_contents($path), JSON_PRETTY_PRINT);
+        }
+
+        $updatedCopies = array_merge($copies, $newCopies);
+
+        ksort($updatedCopies);
+
+        file_put_contents($path, json_encode($updatedCopies, JSON_PRETTY_PRINT));
     }
 }

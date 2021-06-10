@@ -39,7 +39,7 @@ class Headers
         $headers = [];
 
         foreach ($keys as $key) {
-            $headers[$key] = self::getApiKey($key);
+            $headers[$key] = self::header($key);
         }
 
         return $headers;
