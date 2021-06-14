@@ -3,6 +3,8 @@
 namespace Victorlopezalonso\LaravelUtils\Classes;
 
 use Illuminate\Support\Facades\App;
+use Maatwebsite\Excel\Facades\Excel;
+use Victorlopezalonso\LaravelUtils\Exports\CopiesExport;
 
 class Copy
 {
@@ -60,5 +62,39 @@ class Copy
         ksort($updatedCopies);
 
         file_put_contents($path, json_encode($updatedCopies, JSON_PRETTY_PRINT));
+    }
+
+    public static function toArray()
+    {
+        $languages = config('laravel-utils.languages');
+        $copiesArray = [];
+
+        foreach ($languages as $language) {
+            $path = resource_path() . '/lang/' . $language . '.json';
+
+            if (!file_exists($path)) {
+                return;
+            }
+
+            $copies = json_decode(file_get_contents($path), JSON_PRETTY_PRINT);
+
+            foreach ($copies as $key => $value) {
+                $copiesArray[$key]['key'] = $key;
+                $copiesArray[$key][$language] = $value;
+            }
+        }
+
+        $headers = array_merge(['key'], $languages);
+
+        return [$headers, array_values($copiesArray)];
+    }
+
+    public static function fromExcel()
+    {
+    }
+
+    public static function toExcel()
+    {
+        return Excel::store(new CopiesExport, 'copies.xlsx');
     }
 }

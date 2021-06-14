@@ -15,11 +15,11 @@ class LocalizationMiddleware
      */
     public function languageExists()
     {
-        if (!Headers::header('language') || !env('LANGUAGES')) {
+        if (!Headers::header('language') || !config('laravel-utils.languages')) {
             return false;
         }
 
-        return in_array(Headers::header('language'), explode(',', env('LANGUAGES')));
+        return in_array(Headers::header('language'), explode(',', config('laravel-utils.languages')));
     }
 
     /**
