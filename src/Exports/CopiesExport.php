@@ -11,8 +11,6 @@ class CopiesExport implements FromCollection
     {
         $collection = collect(Copy::toArray());
 
-        // dd($collection);
-
         return $collection;
     }
 }

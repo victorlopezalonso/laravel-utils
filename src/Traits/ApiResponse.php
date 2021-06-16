@@ -29,30 +29,52 @@ trait ApiResponse
         return $this;
     }
 
+    public function withCollection(\Illuminate\Http\Resources\Json\AnonymousResourceCollection $data)
+    {
+        $paginatedData = $data->response()->getData();
+
+        $this->response['data'] = $paginatedData->data;
+        isset($paginatedData->links) && $this->response['links'] = $paginatedData->links;
+        isset($paginatedData->meta) && $this->response['meta'] = $paginatedData->meta;
+
+        return $this;
+    }
+
     public function withMessage($message)
     {
         $this->response['message'] = $message;
         return $this;
     }
 
-    public function withError($message, $code = 0)
+    public function withTranslation($message, $replacements = [])
     {
-        $this->response['error'] = [
-            'code' => $code,
-            'message' => $message,
-        ];
+        $this->response['message'] = trans($message, $replacements);
         return $this;
     }
 
-    public function withValidations($validations)
+    public function withErrorMessage($message)
     {
-        $this->response['validations'] = $validations;
+        $this->response['errorMessage'] = $message;
+        return $this;
+    }
+
+    public function withValidations($validator)
+    {
+        $messageBag = $validator->getMessageBag();
+
+        $this->response['message'] = $messageBag->first();
+
+        array_map(function ($key, $value) {
+            $this->response['validations'][$key] = $value;
+        }, $messageBag->keys(), $messageBag->all());
+
         return $this;
     }
 
     public function withStatus($status)
     {
         $this->status = $status;
+        $this->response['status'] = $status;
         return $this;
     }
 
@@ -131,8 +153,15 @@ trait ApiResponse
         return $this->withStatus(HTTP_CODE_503_SERVICE_UNAVAILABLE)->response();
     }
 
-    private function response()
+    public function response()
     {
-        return response()->json($this->response, $this->status, [JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_NUMERIC_CHECK]);
+        $headers = [
+            JSON_UNESCAPED_UNICODE |
+            JSON_UNESCAPED_SLASHES |
+            JSON_NUMERIC_CHECK |
+            JSON_PRETTY_PRINT
+        ];
+
+        return response()->json($this->response, $this->status, $headers);
     }
 }

@@ -2,11 +2,12 @@
 
 namespace Victorlopezalonso\LaravelUtils\Http\Middleware;
 
-use Victorlopezalonso\LaravelUtils\Classes\Headers;
-use Illuminate\Validation\ValidationException;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Validation\Rule;
 use Closure;
+use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\ValidationException;
+use Victorlopezalonso\LaravelUtils\Classes\Headers;
 
 class CheckHeadersMiddleware
 {
