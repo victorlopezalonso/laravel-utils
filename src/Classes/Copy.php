@@ -83,10 +83,7 @@ class Copy
                 $copiesArray[$key][$language] = $value;
             }
         }
-
-        $headers = array_merge(['key'], $languages);
-
-        return [$headers, array_values($copiesArray)];
+        return $copiesArray;
     }
 
     public static function fromExcel()
