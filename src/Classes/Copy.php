@@ -28,6 +28,11 @@ class Copy
         }, ARRAY_FILTER_USE_KEY);
     }
 
+    public static function getLanguages()
+    {
+        return config('laravel-utils.languages');
+    }
+
     public static function get($type = null)
     {
         return $type ? self::filterBy($type) : self::copies();
@@ -84,6 +89,13 @@ class Copy
             }
         }
         return $copiesArray;
+    }
+
+    public static function toArrayWithHeaders()
+    {
+        $headers = array_merge(['key'], self::getLanguages());
+
+        return [$headers, array_values(self::toArray())];
     }
 
     public static function fromExcel()

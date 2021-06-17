@@ -9,13 +9,7 @@ class CopiesExport implements FromCollection
 {
     public function collection()
     {
-        $languages = config('laravel-utils.languages');
-        
-        $headers = array_merge(['key'], $languages);
-
-        $collection = collect([$headers, array_values(Copy::toArray())]);
-
-        // dd($collection);
+        $collection = collect(Copy::toArrayWithHeaders());
 
         return $collection;
     }
