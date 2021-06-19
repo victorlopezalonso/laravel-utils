@@ -5,6 +5,7 @@ namespace Victorlopezalonso\LaravelUtils;
 use Illuminate\Routing\Router;
 use Illuminate\Contracts\Http\Kernel;
 use Illuminate\Support\ServiceProvider;
+use Victorlopezalonso\LaravelUtils\Classes\Config;
 use Victorlopezalonso\LaravelUtils\Http\Middleware\CheckHeadersMiddleware;
 use Victorlopezalonso\LaravelUtils\Http\Middleware\LocalizationMiddleware;
 
@@ -28,6 +29,8 @@ class LaravelUtilsServiceProvider extends ServiceProvider
 
         $kernel = $this->app->make(Kernel::class);
         $kernel->pushMiddleware(LocalizationMiddleware::class);
+
+        Config::init();
 
         if ($this->app->runningInConsole()) {
             $this->publishes([
