@@ -9,7 +9,7 @@ class CopiesExport implements FromCollection
 {
     public function collection()
     {
-        $collection = collect(Copy::toArray());
+        $collection = collect(Copy::toArrayWithHeaders());
 
         return $collection;
     }

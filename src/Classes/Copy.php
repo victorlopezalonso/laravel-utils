@@ -29,6 +29,11 @@ class Copy
         }, ARRAY_FILTER_USE_KEY);
     }
 
+    public static function getLanguages()
+    {
+        return config('laravel-utils.languages');
+    }
+
     /**
      * Return specified type translations using the header language
      *
@@ -126,10 +131,14 @@ class Copy
                 $copiesArray[$key][$language] = $value;
             }
         }
+        return $copiesArray;
+    }
 
-        $headers = array_merge(['key'], $languages);
+    public static function toArrayWithHeaders()
+    {
+        $headers = array_merge(['key'], self::getLanguages());
 
-        return [$headers, array_values($copiesArray)];
+        return [$headers, array_values(self::toArray())];
     }
 
     public static function fromArray($rows)
