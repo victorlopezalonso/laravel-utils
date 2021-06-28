@@ -7,6 +7,7 @@ use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
+use Victorlopezalonso\LaravelUtils\Classes\Config;
 use Victorlopezalonso\LaravelUtils\Classes\Headers;
 
 class CheckHeadersMiddleware
@@ -32,10 +33,15 @@ class CheckHeadersMiddleware
             throw new ValidationException($validator);
         }
 
+        // TODO check minimum config version depending on OS
+        // switch(Headers::getOs()) {
         // throw_if(
-        //     Config::first()->appVersionIsOutdated(),
+        //     config('config.property')
+        //     Config::appVersionIsOutdated(),
         //     new ApiVersionOutdatedException()
         // );
+        // }
+
 
         return $next($request);
     }

@@ -2,8 +2,6 @@
 
 namespace Victorlopezalonso\LaravelUtils\Classes;
 
-use Carbon\Carbon;
-
 define('CONFIG_PATH', storage_path('/app/config.json'));
 
 class Config
@@ -37,15 +35,8 @@ class Config
         file_put_contents(CONFIG_PATH, json_encode($config, JSON_PRETTY_PRINT));
     }
 
-    public static function needsToBeUpdated()
+    public static function incrementCopiesVersion()
     {
-        if (!request('copiesUpdatedAt')) {
-            return true;
-        }
-
-        $copiesUpdatedAt = Carbon::createFromFormat('Y-m-d H:i:s', config('config.copiesUpdatedAt'));
-        $requestCopiesUpdatedAt = Carbon::createFromFormat('Y-m-d H:i:s', request('copiesUpdatedAt'));
-
-        return $copiesUpdatedAt->greaterThan($requestCopiesUpdatedAt);
+        self::put(['copiesVersion' => intval(config('config.copiesVersion') ?? 0) + 1]);
     }
 }

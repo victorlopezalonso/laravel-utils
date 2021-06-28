@@ -105,6 +105,8 @@ class Copy
         ksort($updatedCopies);
 
         file_put_contents($path, json_encode($updatedCopies, JSON_PRETTY_PRINT));
+
+        Config::incrementCopiesVersion();
     }
 
     public static function toArray()
@@ -154,6 +156,11 @@ class Copy
 
             self::add($language, $copies);
         }
+    }
+
+    public static function versionNeedsToBeUpdated($copiesVersion = null)
+    {
+        return intval(config('config.copiesVersion') ?? 1) > intval($copiesVersion ?? 0);
     }
 
     public static function fromExcel(UploadedFile $file = null)
