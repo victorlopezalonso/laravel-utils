@@ -3,12 +3,13 @@
 namespace Victorlopezalonso\LaravelUtils\Http\Middleware;
 
 use Closure;
+use Exception;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
-use Victorlopezalonso\LaravelUtils\Classes\Config;
 use Victorlopezalonso\LaravelUtils\Classes\Headers;
+use Victorlopezalonso\LaravelUtils\Exceptions\ApiException;
 
 class CheckHeadersMiddleware
 {
@@ -33,15 +34,18 @@ class CheckHeadersMiddleware
             throw new ValidationException($validator);
         }
 
-        // TODO check minimum config version depending on OS
-        // switch(Headers::getOs()) {
-        // throw_if(
-        //     config('config.property')
-        //     Config::appVersionIsOutdated(),
-        //     new ApiVersionOutdatedException()
-        // );
-        // }
+        $minimumVersions = [
+            config('laravel-utils.os.android') => config('config.androidVersion'),
+            config('laravel-utils.os.ios') => config('config.iosVersion'),
+            config('laravel-utils.os.web') => config('config.webVersion'),
+        ];
 
+        $minimumVersion = $minimumVersions[Headers::getOs()] ?? '1.0.0';
+
+        throw_if(
+            version_compare(Headers::getAppVersion(), $minimumVersion) === -1,
+            new ApiException('server.version_update_required', 426)
+        );
 
         return $next($request);
     }

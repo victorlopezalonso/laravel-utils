@@ -25,7 +25,7 @@ class LaravelUtilsServiceProvider extends ServiceProvider
         // $this->loadRoutesFrom(__DIR__.'/routes.php');
 
         $router = $this->app->make(Router::class);
-        $router->aliasMiddleware('checkHeaders', CheckHeadersMiddleware::class);
+        $router->pushMiddlewareToGroup('api', CheckHeadersMiddleware::class);
 
         $kernel = $this->app->make(Kernel::class);
         $kernel->pushMiddleware(LocalizationMiddleware::class);
