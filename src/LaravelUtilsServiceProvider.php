@@ -6,8 +6,13 @@ use Illuminate\Routing\Router;
 use Illuminate\Contracts\Http\Kernel;
 use Illuminate\Support\ServiceProvider;
 use Victorlopezalonso\LaravelUtils\Classes\Config;
+use Victorlopezalonso\LaravelUtils\Console\Commands\LaravelInit;
+use Victorlopezalonso\LaravelUtils\Console\Commands\LaravelConfigEmail;
 use Victorlopezalonso\LaravelUtils\Http\Middleware\CheckHeadersMiddleware;
 use Victorlopezalonso\LaravelUtils\Http\Middleware\LocalizationMiddleware;
+use Victorlopezalonso\LaravelUtils\Console\Commands\LaravelCreateAdminUser;
+use Victorlopezalonso\LaravelUtils\Console\Commands\LaravelCreateSupervisorFiles;
+use Victorlopezalonso\LaravelUtils\Console\Commands\LaravelConfigPushNotifications;
 
 class LaravelUtilsServiceProvider extends ServiceProvider
 {
@@ -57,7 +62,13 @@ class LaravelUtilsServiceProvider extends ServiceProvider
             ], 'lang');*/
 
             // Registering package commands.
-            // $this->commands([]);
+            $this->commands([
+                LaravelConfigEmail::class,
+                LaravelConfigPushNotifications::class,
+                LaravelCreateAdminUser::class,
+                LaravelCreateSupervisorFiles::class,
+                LaravelInit::class,
+            ]);
         }
     }
 
