@@ -40,7 +40,7 @@ class CheckHeadersMiddleware
             config('laravel-utils.os.web') => config('config.webVersion'),
         ];
 
-        $minimumVersion = $minimumVersions[Headers::getOs()] ?? '1.0.0';
+        $minimumVersion = $minimumVersions[Headers::getOs()];
 
         throw_if(
             version_compare(Headers::getAppVersion(), $minimumVersion) === -1,
