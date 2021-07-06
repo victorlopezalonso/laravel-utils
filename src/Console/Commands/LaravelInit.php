@@ -3,7 +3,6 @@
 namespace Victorlopezalonso\LaravelUtils\Console\Commands;
 
 use Exception;
-use Illuminate\Support\Facades\App;
 use Victorlopezalonso\LaravelUtils\Console\Command;
 
 class LaravelInit extends Command
@@ -20,7 +19,7 @@ class LaravelInit extends Command
      *
      * @var string
      */
-    protected $description = 'Install the project';
+    protected $description = 'Init the project and set up the database';
 
     /**
      * Execute the console command.
@@ -34,20 +33,8 @@ class LaravelInit extends Command
         }
 
         $this->generateAppKey();
-
-        $this->askForConfiguration();
-
-        if ($this->confirm('Do you want to set up supervisor?')) {
-            $this->createSupervisorFiles();
-        }
-
-        if ($this->confirm('Do you want to set up supervisor for websockets?')) {
-            $this->createSupervisorFilesForSockets();
-        }
-
-        $this->setUpAdminAccount();
-
         $this->storageLink();
+        $this->askForConfiguration();
     }
 
     /**
@@ -62,7 +49,7 @@ class LaravelInit extends Command
             return false;
         }
 
-        $this->comment('Attempting to install the project...');
+        $this->comment('Attempting to init the project...');
 
         return true;
     }
@@ -87,6 +74,14 @@ class LaravelInit extends Command
     }
 
     /**
+     * Create the public link to the storage/public folder.
+     */
+    protected function storageLink()
+    {
+        $this->call('storage:link');
+    }
+
+    /**
      * Set the database configuration and updates the .env file.
      */
     protected function askForConfiguration()
@@ -98,7 +93,10 @@ class LaravelInit extends Command
 
             $config['APP_ENV'] = $this->choice('Environment', config('laravel-utils.environments'), config('laravel-utils.environments.local'));
 
-            $config['APP_DEBUG'] = config('constants.environments.production') !== $config['APP_ENV'];
+            $config['APP_DEBUG'] = !in_array($config['APP_ENV'], [
+                config('laravel-utils.environments.staging'),
+                config('laravel-utils.environments.production'),
+            ]);
 
             $config['APP_NAME'] = '"' . $this->ask('Name of the app') . '"';
             $config['APP_URL'] = $this->ask('Public url');
@@ -120,19 +118,8 @@ class LaravelInit extends Command
                 $config['DB_PASSWORD'] = (string)$this->secret('DB password', false);
             }
 
-            $config['MAIL_FROM_NAME'] = (string)$this->ask('Mail from name', $config['APP_NAME']);
-            $config['MAIL_FROM_ADDRESS'] = $this->ask('Mail from address');
-            $config['MAIL_DRIVER'] = $this->ask('Mail driver', 'smtp');
-            $config['MAIL_HOST'] = $this->ask('Mail host', 'smtp.mailtrap.io');
-            $config['MAIL_PORT'] = $this->ask('Mail port', '2525');
-            $config['MAIL_ENCRYPTION'] = $this->choice('Mail encryption', [
-                'ssl',
-                'tls',
-                'null',
-            ], 'tls');
-
-            $config['MAIL_USERNAME'] = (string)$this->ask('Mail username', 'e474163324d701');
-            $config['MAIL_PASSWORD'] = (string)$this->secret('Mail password', 'f9badaecb12876');
+            // $config['PUSHER_APP_ID'] = $this->ask('Pusher app id');
+            // $config['PUSHER_APP_KEY'] = $this->ask('Pusher app key');
 
             $this->table(array_keys($config), [$config]);
         } while (!$this->confirm('Proceed with this configuration?'));
@@ -149,57 +136,10 @@ class LaravelInit extends Command
 
         $this->updateEnvironmentFile($config);
 
-        $this->info('Migrating database');
+        $this->info('Migrating database...');
         $this->call('migrate:fresh', ['--force' => true]);
 
-        $this->info('Seeding initial data');
+        $this->info('Seeding initial data...');
         $this->call('db:seed', ['--force' => true]);
-    }
-
-    /**
-     * Returns the app name concatenating the environment. Example: "My App" -> MyApp.Develop
-     * @return string
-     */
-    protected function getAppNameWithEnvironment()
-    {
-        return preg_replace('/\s+/', '', env('APP_NAME')) . ucwords(env('APP_ENV'));
-    }
-
-    /**
-     * Create the supervisor .conf file and start to listen.
-     */
-    protected function createSupervisorFiles()
-    {
-        if (App::environment() === 'local') {
-            return;
-        }
-        $this->createSupervisorConfigFile($this->getAppNameWithEnvironment(), 'queue:work --tries=100');
-    }
-
-    /**
-     * Create the supervisor .conf file and start to listen for websockets.
-     */
-    protected function createSupervisorFilesForSockets()
-    {
-        if (App::environment() === 'local') {
-            return;
-        }
-        $this->createSupervisorConfigFile('websockets', 'websockets:serve');
-    }
-
-    /**
-     * Set up the admin account.
-     */
-    protected function setUpAdminAccount()
-    {
-        $this->call('laravel:create-admin-user');
-    }
-
-    /**
-     * Create the public link to the storage/public folder.
-     */
-    protected function storageLink()
-    {
-        $this->call('storage:link');
     }
 }

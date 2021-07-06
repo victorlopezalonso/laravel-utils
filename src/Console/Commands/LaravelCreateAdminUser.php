@@ -1,10 +1,9 @@
 <?php
 
-namespace App\Console\Commands;
+namespace Victorlopezalonso\LaravelUtils\Console\Commands;
 
-use Carbon\Carbon;
-use App\Models\User;
 use Illuminate\Console\Command;
+use Illuminate\Foundation\Auth\User;
 
 class LaravelCreateAdminUser extends Command
 {
@@ -35,25 +34,13 @@ class LaravelCreateAdminUser extends Command
      */
     public function handle()
     {
-        $permissionsList = [
-            'Root'       => config('constants.users.root'),
-            'Admin'      => config('constants.users.admin'),
-            'Consultant' => config('constants.users.consultant'),
-        ];
-
         system('clear');
         $this->info("Let's create a new admin account.");
 
         $name = $this->ask('Name');
         $email = $this->ask('Email address');
 
-        $permissions = $this->choice('Set the user permissions', [
-            config('constants.users.root')       => 'Root',
-            config('constants.users.admin')      => 'Admin',
-            config('constants.users.consultant') => 'Consultant',
-        ], config('constants.users.root'));
-
-        $permissions = $permissionsList[$permissions];
+        $role = $this->choice('Set the user permissions', config('laravel-utils.roles'), config('laravel-utils.roles.root'));
 
         do {
             $password = $this->secret('Password');
@@ -67,14 +54,11 @@ class LaravelCreateAdminUser extends Command
         $password = encryptWithAppSecret($password);
 
         User::create([
-            'user_name'   => 'ROOT_'.$name,
-            'name'        => $name,
-            'email'       => $email,
-            'password'    => $password,
-            'is_admin'    => true,
-            'permissions' => $permissions,
-            'email_verified_at'    => Carbon::now()->timestamp,
-            'verified' => true,
+            'name' => $name,
+            'email' => $email,
+            'password' => $password,
+            'role' => $role,
+            'email_verified_at' => now()->timestamp,
         ]);
 
         $this->info('Admin user created!');

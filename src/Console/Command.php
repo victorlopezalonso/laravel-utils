@@ -81,14 +81,18 @@ class Command extends LaravelCommand
     protected function createSupervisorConfigFile($name, $command, $dir = '/etc/supervisor/conf.d/')
     {
         if (!is_dir($dir)) {
-            $this->error('Directory ' . $dir . ' does not exist');
-            return;
+            mkdir($dir);
         }
 
+        // if (!is_dir($dir)) {
+        //     $this->error('Directory ' . $dir . ' does not exist');
+        //     return;
+        // }
+
         $processesByEnvironment = [
-            'develop' => 2,
-            'staging' => 3,
-            'production' => 10,
+            config('laravel-utils.environments.develop') => 2,
+            config('laravel-utils.environments.staging') => 3,
+            config('laravel-utils.environments.production') => 10,
         ];
 
         $path = base_path();
@@ -132,7 +136,7 @@ class Command extends LaravelCommand
 
         file_put_contents(
             $envFile,
-            preg_replace("/{$key}=(.*)/", "{$key}={$newValue}", file_get_contents($envFile))
+            preg_replace("/^{$key}=(.*)/m", "{$key}={$newValue}", file_get_contents($envFile))
         );
     }
 

@@ -31,6 +31,7 @@ return [
     'roles' => [
         'root' => 'root',
         'admin' => 'admin',
+        'consultant' => 'consultant',
         'user' => 'user',
     ],
     'genders' => [
