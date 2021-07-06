@@ -19,7 +19,7 @@ class LocalizationMiddleware
             return false;
         }
 
-        return in_array(Headers::header('language'), explode(',', config('laravel-utils.languages')));
+        return in_array(Headers::header('language'), config('laravel-utils.languages'));
     }
 
     /**
