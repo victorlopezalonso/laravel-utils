@@ -78,10 +78,10 @@ class Command extends LaravelCommand
         $this->shellExecWithBinary('git', $commands);
     }
 
-    protected function createSupervisorConfigFile($name, $command, $dir = '/etc/supervisor/conf.d/')
+    protected function createSupervisorConfigFile($name, $command, $dir)
     {
         if (!is_dir($dir)) {
-            mkdir($dir);
+            $this->shellExecFromCommandLine("sudo mkdir -p {$dir}");
         }
 
         // if (!is_dir($dir)) {

@@ -32,12 +32,12 @@ class LaravelCreateSupervisorFiles extends Command
     {
         system('clear');
 
-        $dir = $this->ask("This will add supervisor config files into {$this->dir}", $this->dir);
+        $dir = $this->ask("Set the directory to add supervisor config files", $this->dir);
 
         $this->createSupervisorFiles($dir);
 
         if ($this->confirm("Do you want to add sockets support? (this will add a websocket file for each environment)")) {
-            $this->createSupervisorFilesForSockets();
+            $this->createSupervisorFilesForSockets($dir);
         }
     }
 
@@ -53,16 +53,16 @@ class LaravelCreateSupervisorFiles extends Command
     /**
      * Create the supervisor .conf file and start to listen.
      */
-    protected function createSupervisorFiles()
+    protected function createSupervisorFiles($dir)
     {
-        $this->createSupervisorConfigFile($this->getAppNameWithEnvironment(), 'queue:work --tries=100');
+        $this->createSupervisorConfigFile($this->getAppNameWithEnvironment(), 'queue:work --tries=100', $dir);
     }
 
     /**
      * Create the supervisor .conf file and start to listen for websockets.
      */
-    protected function createSupervisorFilesForSockets()
+    protected function createSupervisorFilesForSockets($dir)
     {
-        $this->createSupervisorConfigFile('websockets', 'websockets:serve');
+        $this->createSupervisorConfigFile('websockets', 'websockets:serve', $dir);
     }
 }
