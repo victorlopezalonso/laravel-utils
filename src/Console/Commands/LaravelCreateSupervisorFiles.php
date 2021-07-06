@@ -36,6 +36,8 @@ class LaravelCreateSupervisorFiles extends Command
 
         $this->createSupervisorFiles($dir);
 
+        $this->newLine();
+
         if ($this->confirm("Do you want to add sockets support? (this will add a websocket file for each environment)")) {
             $this->createSupervisorFilesForSockets($dir);
         }
@@ -45,9 +47,9 @@ class LaravelCreateSupervisorFiles extends Command
      * Returns the app name concatenating the environment. Example: "My App" -> MyApp.Develop
      * @return string
      */
-    protected function getAppNameWithEnvironment()
+    protected function getAppName()
     {
-        return preg_replace('/\s+/', '', env('APP_NAME')) . ucwords(env('APP_ENV'));
+        return preg_replace('/\s+/', '', env('APP_NAME'));
     }
 
     /**
@@ -55,7 +57,7 @@ class LaravelCreateSupervisorFiles extends Command
      */
     protected function createSupervisorFiles($dir)
     {
-        $this->createSupervisorConfigFile($this->getAppNameWithEnvironment(), 'queue:work --tries=100', $dir);
+        $this->createSupervisorConfigFile($this->getAppName(), 'queue:work --tries=100', $dir);
     }
 
     /**
