@@ -4,6 +4,7 @@ namespace Victorlopezalonso\LaravelUtils\Console\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Foundation\Auth\User;
+use Illuminate\Support\Facades\Hash;
 
 class LaravelCreateAdminUser extends Command
 {
@@ -40,7 +41,7 @@ class LaravelCreateAdminUser extends Command
         $name = $this->ask('Name');
         $email = $this->ask('Email address');
 
-        $role = $this->choice('Set the user permissions', config('laravel-utils.roles'), config('laravel-utils.roles.root'));
+        $role = $this->choice('Set the user role', config('laravel-utils.roles'), config('laravel-utils.roles.root'));
 
         do {
             $password = $this->secret('Password');
@@ -53,13 +54,17 @@ class LaravelCreateAdminUser extends Command
 
         $password = encryptWithAppSecret($password);
 
+        User::unguard();
+
         User::create([
             'name' => $name,
             'email' => $email,
-            'password' => $password,
+            'password' => Hash::make($password),
             'role' => $role,
-            'email_verified_at' => now()->timestamp,
+            'email_verified_at' => now(),
         ]);
+
+        User::reguard();
 
         $this->info('Admin user created!');
     }

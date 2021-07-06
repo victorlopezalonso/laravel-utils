@@ -93,7 +93,7 @@ class LaravelInit extends Command
 
             $config['APP_ENV'] = $this->choice('Environment', config('laravel-utils.environments'), config('laravel-utils.environments.local'));
 
-            $config['APP_DEBUG'] = !in_array($config['APP_ENV'], [
+            $config['APP_DEBUG'] = (bool)!in_array($config['APP_ENV'], [
                 config('laravel-utils.environments.staging'),
                 config('laravel-utils.environments.production'),
             ]);
@@ -118,10 +118,7 @@ class LaravelInit extends Command
                 $config['DB_PASSWORD'] = (string)$this->secret('DB password', false);
             }
 
-            // $config['PUSHER_APP_ID'] = $this->ask('Pusher app id');
-            // $config['PUSHER_APP_KEY'] = $this->ask('Pusher app key');
-
-            $this->table(array_keys($config), [$config]);
+            $this->list('💾', 'DATABASE SETTINGS', $config);
         } while (!$this->confirm('Proceed with this configuration?'));
 
         //Set the config so that the next DB attempt uses refreshed credentials

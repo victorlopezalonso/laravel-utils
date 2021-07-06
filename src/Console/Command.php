@@ -8,6 +8,20 @@ use Illuminate\Console\Command as LaravelCommand;
 
 class Command extends LaravelCommand
 {
+    protected function list(string $icon, string $message, array $list)
+    {
+        system('clear');
+
+        $this->line("$icon <fg=yellow;options=bold>{$message}</>");
+
+        $this->line(str_pad('', strlen($icon.$message), '-'));
+
+        $this->newLine();
+
+        foreach ($list as $key => $value) {
+            $this->line("👉 <fg=green>{$key}=</><fg=default>{$value}</>");
+        }
+    }
 
     /**
      * @param Process $process

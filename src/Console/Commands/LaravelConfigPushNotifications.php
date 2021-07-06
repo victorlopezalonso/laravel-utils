@@ -41,12 +41,11 @@ class LaravelConfigPushNotifications extends Command
 
         do {
             $this->info('Push notifications');
+            $config['PUSHER_APP_ID'] = '"' . $this->ask('Pusher app id') . '"';
+            $config['PUSHER_APP_KEY'] = '"' . $this->ask('Pusher app key') . '"';
 
-            $config['PUSHER_APP_ID'] = $this->ask('Pusher app id');
-            $config['PUSHER_APP_KEY'] = $this->ask('Pusher app key');
-
-            $this->table(array_keys($config), [$config]);
-        } while (!$this->confirm('Proceed with this configuration?'));
+            $this->list('🚀', 'PUSH NOTIFICATIONS SETTINGS', $config);
+        } while (!$this->confirm('🤔 Proceed with this configuration?'));
 
         $this->updateEnvironmentFile($config);
     }
