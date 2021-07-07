@@ -41,6 +41,12 @@ class LaravelCreateSupervisorFiles extends Command
         if ($this->confirm("Do you want to add sockets support? (this will add a websocket file for each environment)")) {
             $this->createSupervisorFilesForSockets($dir);
         }
+
+        $this->shellExecFromCommandLine("sudo supervisorctl stop all");
+        $this->shellExecFromCommandLine("sudo supervisorctl reread");
+        $this->shellExecFromCommandLine("sudo supervisorctl update");
+        $this->shellExecFromCommandLine("sudo supervisorctl start all");
+        $this->shellExecFromCommandLine("sudo supervisorctl status");
     }
 
     /**
