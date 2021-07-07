@@ -93,9 +93,9 @@ class LaravelInit extends Command
 
             $config['APP_ENV'] = $this->choice('Environment', config('laravel-utils.environments'), config('laravel-utils.environments.local'));
 
-            $config['APP_DEBUG'] = (bool)!in_array($config['APP_ENV'], [
-                config('laravel-utils.environments.staging'),
-                config('laravel-utils.environments.production'),
+            $config['APP_DEBUG'] = (bool)in_array($config['APP_ENV'], [
+                config('laravel-utils.environments.local'),
+                config('laravel-utils.environments.testing'),
             ]);
 
             $config['APP_NAME'] = '"' . $this->ask('Name of the app') . '"';
