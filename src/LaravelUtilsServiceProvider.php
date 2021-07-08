@@ -6,6 +6,7 @@ use Illuminate\Routing\Router;
 use Illuminate\Contracts\Http\Kernel;
 use Illuminate\Support\ServiceProvider;
 use Victorlopezalonso\LaravelUtils\Classes\Config;
+use Victorlopezalonso\LaravelUtils\Console\Commands\LaravelInfo;
 use Victorlopezalonso\LaravelUtils\Console\Commands\LaravelInit;
 use Victorlopezalonso\LaravelUtils\Console\Commands\LaravelConfigEmail;
 use Victorlopezalonso\LaravelUtils\Http\Middleware\CheckHeadersMiddleware;
@@ -67,6 +68,7 @@ class LaravelUtilsServiceProvider extends ServiceProvider
                 LaravelConfigPushNotifications::class,
                 LaravelCreateAdminUser::class,
                 LaravelCreateSupervisorFiles::class,
+                LaravelInfo::class,
                 LaravelInit::class,
             ]);
         }
