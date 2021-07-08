@@ -3,6 +3,7 @@
 namespace Victorlopezalonso\LaravelUtils\Console;
 
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Crypt;
 use Symfony\Component\Process\Process;
 use Illuminate\Console\Command as LaravelCommand;
 
@@ -165,6 +166,11 @@ class Command extends LaravelCommand
         foreach ($updatedValues as $key => $value) {
             $this->setEnvironmentValue($key, $value);
         }
+    }
+
+    public static function isValidDeployKey($key)
+    {
+        return Crypt::decrypt($key) === env('APP_KEY');
     }
 
     public static function deploy()
