@@ -33,7 +33,7 @@ class LaravelInfo extends Command
             "URL" => env("APP_URL"),
             "x-api-key" => env("APP_KEY"),
             "app_hash" => env("APP_HASH"),
-            "deploy_key" => Crypt::encrypt(env("APP_KEY")),
+            "deploy_URL" => env("APP_URL") . '/deploy/?key=' . Crypt::encrypt(env("APP_KEY")),
         ];
 
         $this->list('ℹ️', env('APP_NAME') . ' | ' . env("APP_ENV"), $params);
