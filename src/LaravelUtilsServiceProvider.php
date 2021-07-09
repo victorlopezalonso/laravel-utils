@@ -6,6 +6,8 @@ use Illuminate\Routing\Router;
 use Illuminate\Contracts\Http\Kernel;
 use Illuminate\Support\ServiceProvider;
 use Victorlopezalonso\LaravelUtils\Classes\Config;
+use Victorlopezalonso\App\Providers\EventServiceProvider;
+use Victorlopezalonso\App\Providers\GoogleCustomProvider;
 use Victorlopezalonso\LaravelUtils\Console\Commands\LaravelInfo;
 use Victorlopezalonso\LaravelUtils\Console\Commands\LaravelInit;
 use Victorlopezalonso\LaravelUtils\Console\Commands\LaravelConfigEmail;
@@ -17,31 +19,62 @@ use Victorlopezalonso\LaravelUtils\Console\Commands\LaravelConfigPushNotificatio
 
 class LaravelUtilsServiceProvider extends ServiceProvider
 {
-    /**
-     * Bootstrap the application services.
-     */
-    public function boot()
+    private function initMiddlewares()
     {
-        /*
-         * Optional methods to load your package assets
-         */
-        // $this->loadTranslationsFrom(__DIR__.'/../resources/lang', 'laravel-utils');
-        // $this->loadViewsFrom(__DIR__.'/../resources/views', 'laravel-utils');
-        // $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
-        $this->loadRoutesFrom(__DIR__.'/routes/web.php');
-
         $router = $this->app->make(Router::class);
         $router->pushMiddlewareToGroup('api', CheckHeadersMiddleware::class);
 
         $kernel = $this->app->make(Kernel::class);
         $kernel->pushMiddleware(LocalizationMiddleware::class);
+    }
 
+    private function publishCommands()
+    {
+        $this->commands([
+            LaravelConfigEmail::class,
+            LaravelConfigPushNotifications::class,
+            LaravelCreateAdminUser::class,
+            LaravelCreateSupervisorFiles::class,
+            LaravelInfo::class,
+            LaravelInit::class,
+        ]);
+    }
+
+    private function initGoogleCustomSocialiteProvider()
+    {
+        $socialite = $this->app->make('Laravel\Socialite\Contracts\Factory');
+        $socialite->extend(
+            'google',
+            function ($app) use ($socialite) {
+                $config = $app['config']['services.google'];
+                return $socialite->buildProvider(GoogleCustomProvider::class, $config);
+            }
+        );
+    }
+
+    /**
+     * Bootstrap the application services.
+     */
+    public function boot()
+    {
         Config::init();
+
+        // $this->loadTranslationsFrom(__DIR__.'/../resources/lang', 'laravel-utils');
+        // $this->loadViewsFrom(__DIR__.'/../resources/views', 'laravel-utils');
+        // $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
+
+        $this->loadRoutesFrom(__DIR__.'/routes/web.php');
+
+        $this->initMiddlewares();
+
+        $this->initGoogleCustomSocialiteProvider();
 
         if ($this->app->runningInConsole()) {
             $this->publishes([
                 __DIR__.'/../config/config.php' => config_path('laravel-utils.php'),
             ], 'config');
+
+            $this->publishCommands();
 
             // $this->publishes([
             //     __DIR__.'/../helpers' => config_path('laravel-utils.php'),
@@ -61,16 +94,6 @@ class LaravelUtilsServiceProvider extends ServiceProvider
             /*$this->publishes([
                 __DIR__.'/../resources/lang' => resource_path('lang/vendor/laravel-utils'),
             ], 'lang');*/
-
-            // Registering package commands.
-            $this->commands([
-                LaravelConfigEmail::class,
-                LaravelConfigPushNotifications::class,
-                LaravelCreateAdminUser::class,
-                LaravelCreateSupervisorFiles::class,
-                LaravelInfo::class,
-                LaravelInit::class,
-            ]);
         }
     }
 
@@ -82,6 +105,7 @@ class LaravelUtilsServiceProvider extends ServiceProvider
         // Automatically apply the package configuration
         $this->mergeConfigFrom(__DIR__.'/../config/config.php', 'laravel-utils');
 
+        $this->app->register(EventServiceProvider::class);
 
         // Register the main class to use with the facade
         $this->app->singleton('laravel-utils', function () {
