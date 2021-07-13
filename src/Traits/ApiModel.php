@@ -143,6 +143,6 @@ class ApiModel extends Model
     {
         return request('limit') && request('limit') < 100
             ? request('limit')
-            : config('api_default_per_page');
+            : config('laravel-utils.api_default_per_page');
     }
 }
