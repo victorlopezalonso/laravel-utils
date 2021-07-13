@@ -1,1 +1,1 @@
-C:37:"PHPUnit\Runner\DefaultTestResultCache":122:{a:2:{s:7:"defects";a:0:{}s:5:"times";a:1:{s:62:"Victorlopezalonso\LaravelUtils\Tests\ExampleTest::true_is_true";d:0.049;}}}
+{"version":1,"defects":{"Victorlopezalonso\\LaravelUtils\\Tests\\ExampleTest::true_is_true":4},"times":{"Victorlopezalonso\\LaravelUtils\\Tests\\ExampleTest::true_is_true":0.048}}

@@ -6,10 +6,9 @@ use Illuminate\Routing\Router;
 use Illuminate\Contracts\Http\Kernel;
 use Illuminate\Support\ServiceProvider;
 use Victorlopezalonso\LaravelUtils\Classes\Config;
-use Victorlopezalonso\App\Providers\EventServiceProvider;
-use Victorlopezalonso\App\Providers\GoogleCustomProvider;
 use Victorlopezalonso\LaravelUtils\Console\Commands\LaravelInfo;
 use Victorlopezalonso\LaravelUtils\Console\Commands\LaravelInit;
+use Victorlopezalonso\LaravelUtils\Providers\EventServiceProvider;
 use Victorlopezalonso\LaravelUtils\Console\Commands\LaravelConfigEmail;
 use Victorlopezalonso\LaravelUtils\Http\Middleware\CheckHeadersMiddleware;
 use Victorlopezalonso\LaravelUtils\Http\Middleware\LocalizationMiddleware;
@@ -40,18 +39,6 @@ class LaravelUtilsServiceProvider extends ServiceProvider
         ]);
     }
 
-    private function initGoogleCustomSocialiteProvider()
-    {
-        $socialite = $this->app->make('Laravel\Socialite\Contracts\Factory');
-        $socialite->extend(
-            'google',
-            function ($app) use ($socialite) {
-                $config = $app['config']['services.google'];
-                return $socialite->buildProvider(GoogleCustomProvider::class, $config);
-            }
-        );
-    }
-
     /**
      * Bootstrap the application services.
      */
@@ -66,8 +53,6 @@ class LaravelUtilsServiceProvider extends ServiceProvider
         $this->loadRoutesFrom(__DIR__.'/routes/web.php');
 
         $this->initMiddlewares();
-
-        $this->initGoogleCustomSocialiteProvider();
 
         if ($this->app->runningInConsole()) {
             $this->publishes([
@@ -105,7 +90,8 @@ class LaravelUtilsServiceProvider extends ServiceProvider
         // Automatically apply the package configuration
         $this->mergeConfigFrom(__DIR__.'/../config/config.php', 'laravel-utils');
 
-        $this->app->register(EventServiceProvider::class);
+        // $this->app->register(EventServiceProvider::class);
+        // $this->app->register(MySocialServiceProvider::class);
 
         // Register the main class to use with the facade
         $this->app->singleton('laravel-utils', function () {
