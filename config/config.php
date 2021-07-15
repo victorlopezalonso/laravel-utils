@@ -39,4 +39,10 @@ return [
         'female' => 'female',
         'other' => 'other',
     ],
+    'dev-dependencies' => [
+        'local',
+        'testing',
+        'develop',
+        'staging',
+    ]
 ];
