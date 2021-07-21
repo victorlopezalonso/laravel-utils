@@ -173,10 +173,17 @@ class Command extends LaravelCommand
         return Crypt::decrypt($key) === env('APP_KEY');
     }
 
+    public static function isInDevDependencies()
+    {
+        return in_array(env('APP_ENV'), config('laravel-utils.dev-dependencies'));
+    }
+
     public static function deploy()
     {
         $rootPath = base_path();
-        $process = Process::fromShellCommandline('cd ' . $rootPath . '; ./deploy.sh');
+        $dependencies = self::isInDevDependencies() ? 'dev' : 'no-dev';
+        $process = Process::fromShellCommandline("cd {$rootPath};./deploy.sh {$dependencies}");
+
         $process->run(function ($type, $buffer) {
             echo $buffer;
         });
