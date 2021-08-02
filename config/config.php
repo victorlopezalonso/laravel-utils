@@ -44,5 +44,9 @@ return [
         'testing',
         'develop',
         'staging',
+    ],
+    'onesignal' => [
+        'app_id' => env('PUSHER_APP_ID'),
+        'app_key' => env('PUSHER_APP_KEY'),
     ]
 ];
