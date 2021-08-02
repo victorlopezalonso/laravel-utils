@@ -259,10 +259,6 @@ class OneSignal implements PushInterface
     {
         $this->mount();
 
-        if (app()->environment('testing')) {
-            return;
-        }
-
         PushJob::dispatch($this->params);
     }
 

@@ -30,6 +30,10 @@ class PushJob implements ShouldQueue
      */
     public function handle()
     {
+        if (app()->environment('testing')) {
+            return;
+        }
+
         OneSignal::make($this->params)->send();
     }
 }
