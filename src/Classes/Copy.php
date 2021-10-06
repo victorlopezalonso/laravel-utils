@@ -109,6 +109,35 @@ class Copy
         Config::incrementCopiesVersion();
     }
 
+    private static function addInAllLanguages($newCopies) {
+        $languages = config('laravel-utils.languages');
+
+        foreach ($languages as $language) {
+            self::add($language, $newCopies);
+        }
+    }
+
+    public static function addServerCopyInAllLanguages($copy) {
+        $type = env('SERVER_COPY_KEY') ?? 'server.';
+        $copy['key'] = 'server.'.$copy['key'];
+
+        self::addInAllLanguages([$copy]);
+    }
+
+    public static function addClientCopyInAllLanguages($copy) {
+        $type = env('CLIENT_COPY_KEY') ?? 'client.';
+        $copy['key'] = 'client.'.$copy['key'];
+
+        self::addInAllLanguages([$copy]);
+    }
+
+    public static function addAdminCopyInAllLanguages($copy) {
+        $type = env('ADMIN_COPY_KEY') ?? 'admin.';
+        $copy['key'] = $type.$copy['key'];
+
+        self::addInAllLanguages([$copy]);
+    }
+
     public static function toArray()
     {
         $languages = config('laravel-utils.languages');
