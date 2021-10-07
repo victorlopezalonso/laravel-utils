@@ -203,6 +203,10 @@ class Copy
         return self::toArray('admin', $needle);
     }
 
+    public static function searchInAllLanguages($needle) {
+        return self::toArray(null, $needle);
+    }
+
     public static function toArrayWithHeaders()
     {
         $headers = array_merge(['key'], config('laravel-utils.languages'));
