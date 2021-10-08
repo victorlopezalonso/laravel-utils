@@ -126,7 +126,7 @@ class Copy
         $languages = config('laravel-utils.languages');
 
         foreach ($languages as $language) {
-            self::add($language, $newCopies);
+            self::add($language, $newCopies[$language]);
         }
     }
 
@@ -236,7 +236,7 @@ class Copy
 
     public static function versionNeedsToBeUpdated($copiesVersion = null)
     {
-        return intval(config('config.copiesVersion') ?? 1) > intval($copiesVersion ?? 0);
+        return (int)(config('config.copiesVersion') ?? 1) > (int)($copiesVersion ?? 0);
     }
 
     public static function fromExcel(UploadedFile $file = null)
