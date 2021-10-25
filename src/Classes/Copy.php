@@ -9,7 +9,8 @@ use Victorlopezalonso\LaravelUtils\Imports\CopiesImport;
 
 class Copy
 {
-    private static function getTypeKey($type) {
+    private static function getTypeKey($type)
+    {
         switch ($type) {
             case 'client':
                 return env('CLIENT_COPY_KEY') ?? 'client.';
@@ -89,19 +90,56 @@ class Copy
     /**
      * Return translated key in all the app languages
      *
-     * @param string $type
+     * @param string $key
+     * @param array $replacements
      * @return array
      */
-    public static function inAllLanguages($key, $replacements = [])
+    private static function inAllLanguages($key, $replacements = [])
     {
         $languages = config('laravel-utils.languages');
         $copies = [];
 
         foreach ($languages as $language) {
-            $copies[$language] = trans($key, $replacements);
+            $copies[$language] = trans($key, $replacements, $language);
         }
 
         return $copies;
+    }
+
+    /**
+     * Return translated server key in all the app languages
+     *
+     * @param string $key
+     * @param array $replacements
+     * @return array
+     */
+    public static function serverInAllLanguages($key, $replacements = [])
+    {
+        return self::inAllLanguages(self::getTypeKey('server') . $key, $replacements);
+    }
+
+    /**
+     * Return translated admin key in all the app languages
+     *
+     * @param string $key
+     * @param array $replacements
+     * @return array
+     */
+    public static function adminInAllLanguages($key, $replacements = [])
+    {
+        return self::inAllLanguages(self::getTypeKey('admin') . $key, $replacements);
+    }
+
+    /**
+     * Return translated client key in all the app languages
+     *
+     * @param string $key
+     * @param array $replacements
+     * @return array
+     */
+    public static function clientInAllLanguages($key, $replacements = [])
+    {
+        return self::inAllLanguages(self::getTypeKey('client') . $key, $replacements);
     }
 
     public static function add($language, $newCopies)
@@ -122,39 +160,45 @@ class Copy
         Config::incrementCopiesVersion();
     }
 
-    private static function addInAllLanguages($newCopies) {
+    private static function addInAllLanguages($newCopies)
+    {
         $languages = config('laravel-utils.languages');
 
         foreach ($languages as $language) {
-            self::add($language, $newCopies[$language]);
+            self::add($language, [$newCopies['key'] => $newCopies[$language]]);
         }
     }
 
-    public static function addServerCopyInAllLanguages($copy) {
+    public static function addServerCopyInAllLanguages($copy)
+    {
         $copy['key'] = self::getTypeKey('server').$copy['key'];
 
-        self::addInAllLanguages([$copy]);
+        self::addInAllLanguages($copy);
     }
 
-    public static function addClientCopyInAllLanguages($copy) {
+    public static function addClientCopyInAllLanguages($copy)
+    {
         $copy['key'] = self::getTypeKey('client').$copy['key'];
 
-        self::addInAllLanguages([$copy]);
+        self::addInAllLanguages($copy);
     }
 
-    public static function addAdminCopyInAllLanguages($copy) {
+    public static function addAdminCopyInAllLanguages($copy)
+    {
         $copy['key'] = self::getTypeKey('admin').$copy['key'];
 
-        self::addInAllLanguages([$copy]);
+        self::addInAllLanguages($copy);
     }
 
-    private static function filterArrayByType($array, $type) {
+    private static function filterArrayByType($array, $type)
+    {
         return array_filter($array, function ($key) use ($type) {
             return strpos($key, self::getTypeKey($type)) === 0;
         }, ARRAY_FILTER_USE_KEY);
     }
 
-    private static function filterLanguageArrayByAllFields($array, $language, $needle) {
+    private static function filterLanguageArrayByAllFields($array, $language, $needle)
+    {
         return array_filter($array, function ($copy, $key) use ($language, $needle) {
             return strpos($key, $needle) !== false
                 || strpos($copy[$language], $needle) !== false;
@@ -191,19 +235,23 @@ class Copy
         return $copiesArray;
     }
 
-    public static function clientArray($needle = null) {
+    public static function clientArray($needle = null)
+    {
         return self::toArray('client', $needle);
     }
 
-    public static function serverArray($needle = null) {
+    public static function serverArray($needle = null)
+    {
         return self::toArray('server', $needle);
     }
 
-    public static function adminArray($needle = null) {
+    public static function adminArray($needle = null)
+    {
         return self::toArray('admin', $needle);
     }
 
-    public static function searchInAllLanguages($needle) {
+    public static function searchInAllLanguages($needle)
+    {
         return self::toArray(null, $needle);
     }
 
