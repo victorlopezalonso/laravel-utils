@@ -107,6 +107,30 @@ class Copy
     }
 
     /**
+     * Return an array with all the app languages as keys and the string passed as value
+     * Accepts an array of replacements -> %1 %2...%n
+     *
+     * @param string $string
+     * @param array $replacements
+     * @return array
+     */
+    public static function fromStringInAllLanguages($string, $replacements = [])
+    {
+        $languages = config('laravel-utils.languages');
+        $copies = [];
+
+        foreach ($replacements as $key => $replacement) {
+            $string = str_replace('%' . (int)($key + 1), $replacement, $string);
+        }
+
+        foreach ($languages as $language) {
+            $copies[$language] = $string;
+        }
+
+        return $copies;
+    }
+
+    /**
      * Return translated server key in all the app languages
      *
      * @param string $key
