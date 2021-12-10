@@ -247,15 +247,17 @@ class Copy
                 $copies = self::filterArrayByType($copies, $type);
             }
 
-            if ($needle) {
-                $copies = self::filterLanguageArrayByAllFields($copies, $language, $needle);
-            }
 
             foreach ($copies as $key => $value) {
                 $copiesArray[$key]['key'] = $key;
                 $copiesArray[$key][$language] = $value;
             }
         }
+
+        if ($needle) {
+            return self::filterLanguageArrayByAllFields($copiesArray, $language, $needle);
+        }
+
         return $copiesArray;
     }
 
