@@ -39,7 +39,8 @@
         }
     },
     "scripts": {
-        "test": "vendor/bin/phpunit",
+        "test": "./vendor/bin/phpunit --filter",
+        "tests": "./vendor/bin/phpunit",
         "test-coverage": "vendor/bin/phpunit --coverage-html coverage"
     },
     "config": {

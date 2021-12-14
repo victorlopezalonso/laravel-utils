@@ -97,4 +97,22 @@ class CopyTest extends TestCase
         $this->assertEquals($this->copy['es'], $copy['es']);
         $this->assertEquals($this->copy['en'], $copy['en']);
     }
+
+    /** @test */
+    public function it_returns_an_admin_copy_filtered()
+    {
+        Copy::addAdminCopyInAllLanguages($this->copy);
+
+        $results = Copy::searchInAllLanguages($this->copy['key']);
+        $this->assertTrue((bool)count($results));
+
+        $results = Copy::searchInAllLanguages($this->copy['es']);
+        $this->assertTrue((bool)count($results));
+
+        $results = Copy::searchInAllLanguages($this->copy['en']);
+        $this->assertTrue((bool)count($results));
+
+        $result = Copy::searchInAllLanguages('notexistingtext');
+        $this->assertFalse((bool)count($result));
+    }
 }

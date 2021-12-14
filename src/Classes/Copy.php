@@ -221,11 +221,18 @@ class Copy
         }, ARRAY_FILTER_USE_KEY);
     }
 
-    private static function filterLanguageArrayByAllFields($array, $language, $needle)
+    private static function filterLanguageArrayByAllFields($array, $needle)
     {
-        return array_filter($array, function ($copy, $key) use ($language, $needle) {
-            return strpos($key, $needle) !== false
-                || strpos($copy[$language], $needle) !== false;
+        $languages = config('laravel-utils.languages');
+
+        return array_filter($array, function ($copy) use ($needle, $languages) {
+            foreach ($languages as $language) {
+                if (str_contains($copy[$language], $needle)) {
+                    return true;
+                }
+            }
+
+            return str_contains($copy['key'], $needle);
         }, ARRAY_FILTER_USE_BOTH);
     }
 
@@ -251,10 +258,10 @@ class Copy
                 $copiesArray[$key]['key'] = $key;
                 $copiesArray[$key][$language] = $value;
             }
+        }
 
-            if ($needle) {
-                $copiesArray = self::filterLanguageArrayByAllFields($copiesArray, $language, $needle);
-            }
+        if ($needle) {
+            $copiesArray = self::filterLanguageArrayByAllFields($copiesArray, $needle);
         }
 
         return $copiesArray;
