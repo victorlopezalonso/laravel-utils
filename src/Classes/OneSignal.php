@@ -214,6 +214,21 @@ class OneSignal implements PushInterface
     }
 
     /**
+     * Set custom property
+     *
+     * @param string $key property name
+     * @param $value property value
+     *
+     * @return $this
+     */
+    public function setProperty(string $key, $value)
+    {
+        $this->params[$key] = $value;
+
+        return $this;
+    }
+
+    /**
      * Return the params of the object.
      *
      * @return object
