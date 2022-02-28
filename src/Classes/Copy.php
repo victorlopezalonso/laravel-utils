@@ -314,6 +314,25 @@ class Copy
         }
     }
 
+    public static function delete($key)
+    {
+        $languages = config('laravel-utils.languages');
+
+        foreach ($languages as $language) {
+            $path = lang_path().'/'.$language.'.json';
+
+            if (! file_exists($path)) {
+                return;
+            }
+
+            $copies = json_decode(file_get_contents($path), JSON_PRETTY_PRINT);
+
+            unset($copies[$key]);
+
+            file_put_contents($path, json_encode($copies, JSON_PRETTY_PRINT));
+        }
+    }
+
     public static function versionNeedsToBeUpdated($copiesVersion = null)
     {
         return (int)(config('config.copiesVersion') ?? 1) > (int)($copiesVersion ?? 0);
